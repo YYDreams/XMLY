@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         let vc = XMHomeViewController()
-        self.window?.backgroundColor = UIColor.orange
         self.window?.rootViewController = vc
         self.window?.makeKeyAndVisible()
  
