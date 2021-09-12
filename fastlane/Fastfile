@@ -13,11 +13,73 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
+APP_NAME = "XMLY"
+scheme = "XMLY"
+
+ default_platform(:ios)
 
 platform :ios do
-  desc "Description of what the lane does"
-  lane :custom_lane do
-    # add actions here: https://docs.fastlane.tools/actions
+
+  before_all do
+    cocoapods
   end
+
+  desc "Generate new localized screenshots"
+  lane :screenshots do
+    capture_screenshots(scheme: "XMLY")
+  end
+  lane :beta do
+    cocoapods
+
+     ipa_name = ""+scheme+".ipa"
+  	# sync_code_signing
+  	# disable_automatic_code_signing(path: "XMLY.xcodeproj")
+  	gym(scheme: "XMLY",  #项目名称
+      export_method: "development",  #打包的类型 导出方式 ad-hoc、enterprise、app-store、development
+      configuration: "Debug",  #模式，默认Release，还有Debug
+      include_symbols: false,  #是否包含调试符号
+      include_bitcode: false, #是否开启bitcode
+      output_name: ipa_name,
+      output_directory: './build') #输出的位置
+#  上传ipa到fir.im服务器，在fir.im获取firim_api_token
+    
+    # fastlane sigh resign ./build/XMLY.ipa --signing_identity "D9FA13B957A508180DC0D2AD7322EF3789DAABDF" -p "./build/xiaoeclient_inhouse_inhouse.mobileprovision"
+    firim(firim_api_token: "c8148015545b205b2dd2fa0f52dc4fc1") 
+  end
+
 end
+
+# platform :ios do
+#   #在执行lane前先跑一遍cocoapods
+  
+
+#   #debug包
+#   lane :iosDebug do
+#     package(configuration: "Debug",method:"development")
+#     pgyer(api_key: "7f15xxxxxxxxxxxxxxxxxx141", user_key: "4a5bcxxxxxxxxxxxxxxx3a9e")
+#   end
+
+#   #release包
+#   lane :iosRelease do
+#     package(configuration: "Release",method:"ad-hoc")
+#     pgyer(api_key: "7f15xxxxxxxxxxxxxxxxxx141", user_key: "4a5bcxxxxxxxxxxxxxxx3a9e")
+#   end
+
+#     #发布包
+#   lane :iosAppStore do
+#     package(configuration: "Release",method:"app-store"")
+#   end
+
+#   #打包函数
+#   lane :package do |option|
+#      #打包
+#      gym(
+#       scheme: "#{SCHEME}",
+#       export_method: option[:method],
+#       configuration: option[:configuration],
+#       include_symbols: true,
+#       include_bitcode: false,
+#       export_xcargs: "-allowProvisioningUpdates",
+#       )      
+#   end
+# end
